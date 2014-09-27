@@ -64,16 +64,22 @@ import Data.Tree
 import Control.Monad ( liftM, when )
 import Control.Exception (assert)
 import Data.IORef
-import Graphics.UI.Gtk.ModelView.Types
-import Graphics.UI.Gtk.Types (GObjectClass(..), TreeModelClass)
+-- import Graphics.UI.Gtk.ModelView.Types
+-- import Graphics.UI.Gtk.Types (GObjectClass(..), TreeModelClass)
+import System.Glib.GObject
 import Graphics.UI.Gtk.ModelView.CustomStore
 import Graphics.UI.Gtk.ModelView.TreeModel
 import Graphics.UI.Gtk.ModelView.TreeDrag
 import Control.Monad.Trans ( liftIO )
+import Foreign.C.Types (CInt(..))
 
 --------------------------------------------
 -- internal model data types
 --
+
+-- update the stamp of a tree iter
+treeIterSetStamp :: TreeIter -> CInt -> TreeIter
+treeIterSetStamp (TreeIter _ a b c) s = (TreeIter s a b c)
 
 -- | A store for hierarchical data.
 --
@@ -144,12 +150,12 @@ treeStoreNewDND forest mDSource mDDest = do
           _ -> error "TreeStore.getRow: iter does not refer to a valid entry",
 
     treeModelIfaceIterNext = \iter -> withStoreUpdateCache $
-      \Store { capacity = c, content = cache } -> iterNext d iter cache,
+      \Store { capacity = c, content = cache } -> iterNext c iter cache,
 
     treeModelIfaceIterChildren = \mIter -> withStoreUpdateCache $
       \Store { capacity = c, content = cache } ->
       let iter = fromMaybe invalidIter mIter
-       in iterNthChild d 0 iter cache,
+       in iterNthChild c 0 iter cache,
 
     treeModelIfaceIterHasChild = \iter -> withStoreUpdateCache $
       \Store { capacity = c, content = cache } ->
@@ -269,7 +275,7 @@ showBits a = [ if testBit a i then '1' else '0' | i <- [0..bitSize a - 1] ]
 -- | Calculate the maximum number of nodes on a per-level basis.
 --
 calcForestCapacity :: Forest a -> Capacity
-calcForestcapacity f = map bitsNeeded $
+calcForestCapacity f = map bitsNeeded $
                     takeWhile (/=0) $
                     foldr calcTreeCapacity (repeat 0) f
   where
@@ -630,7 +636,7 @@ treeStoreChangeM (TreeStore model) path act = do
       Just newForest -> (Store { capacity = c,
                                  content = storeToCache newForest }, True)
   writeIORef (customStoreGetPrivate model) store'
-  let Just iter = fromPath d path
+  let Just iter = fromPath c path
   stamp <- customStoreGetStamp model
   when found $ treeModelRowChanged model path (treeIterSetStamp iter stamp)
   return found
@@ -669,9 +675,9 @@ treeStoreGetTree :: TreeStore a -> TreePath -> IO (Tree a)
 treeStoreGetTree (TreeStore model) path = do
   store@Store { capacity = c, content = cache } <-
       readIORef (customStoreGetPrivate model)
-  case fromPath d path of
+  case fromPath c path of
     (Just iter) -> do
-      let (res, cache') = checkSuccess d iter cache
+      let (res, cache') = checkSuccess c iter cache
       writeIORef (customStoreGetPrivate model) store { content = cache' }
       case cache' of
         ((_,node:_):_) | res -> return node
@@ -685,9 +691,9 @@ treeStoreLookup :: TreeStore a -> TreePath -> IO (Maybe (Tree a))
 treeStoreLookup (TreeStore model) path = do
   store@Store { capacity = c, content = cache } <-
       readIORef (customStoreGetPrivate model)
-  case fromPath d path of
+  case fromPath c path of
     (Just iter) -> do
-      let (res, cache') = checkSuccess d iter cache
+      let (res, cache') = checkSuccess c iter cache
       writeIORef (customStoreGetPrivate model) store { content = cache' }
       case cache' of
         ((_,node:_):_) | res -> return (Just node)
