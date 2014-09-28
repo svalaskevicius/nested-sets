@@ -28,5 +28,5 @@ forestToNestedSets = fst . nestedSetsStartingAt ([], 0)
             in (siblingCapacities ++ [NestedSetsNode currentElementStart currentElementEnd elementContent subForestNestedSets], currentElementEnd)
 
 nestedSetsToForest :: NestedSets a -> Forest a
-nestedSetsToForest sets = map (\el -> Node (content el) []) sets
+nestedSetsToForest = map (\el -> Node (content el) (nestedSetsToForest $ children el))
 

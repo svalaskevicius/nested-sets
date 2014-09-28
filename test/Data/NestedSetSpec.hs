@@ -35,7 +35,11 @@ spec = describe "Nested set" $ do
         it "generates forest for two nodes" $ do
             nestedSetsToForest [NestedSetsNode 1 2 'a' [], NestedSetsNode 3 4 'b' []] `shouldBe` [Node 'a' [], Node 'b' []]
 
+        it "generates forest for nested nodes" $ do
+            nestedSetsToForest [NestedSetsNode 1 2 'a' [NestedSetsNode 3 4 'b' []]] `shouldBe` [Node 'a' [Node 'b' []]]
 
+        it "converts nested sets to forest" $ do
+            nestedSetsToForest complexNestedSets `shouldBe` complexForest
 
 complexForest :: Forest Char
 complexForest = [Node 'a' [
