@@ -5,6 +5,7 @@ module Data.NestedSet (
     forestToNestedSets,
     nestedSetsToForest,
     nestedSetsStartPosition,
+    nestedSetsNextSiblingPosition,
     ) where
 
 import Data.Tree (Forest, subForest, rootLabel, Tree(..))
@@ -35,3 +36,9 @@ nestedSetsToForest = map (\el -> Node (content el) (nestedSetsToForest $ childre
 nestedSetsStartPosition :: NestedSets a -> Maybe Position
 nestedSetsStartPosition [] = Nothing
 nestedSetsStartPosition (first:_) = Just . position $ first
+
+nestedSetsNextSiblingPosition :: NestedSets a -> Position -> Maybe Position
+nestedSetsNextSiblingPosition [] _ = Nothing
+nestedSetsNextSiblingPosition (first:second:ds) pos = if (position first == pos) then Just . position $ second else nestedSetsNextSiblingPosition (second:ds) pos
+nestedSetsNextSiblingPosition (first:[]) _ = Nothing
+

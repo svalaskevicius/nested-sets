@@ -41,11 +41,30 @@ spec = describe "Nested set" $ do
         it "converts nested sets to forest" $ do
             nestedSetsToForest complexNestedSets `shouldBe` complexForest
 
-    describe "nested set position" $ do
-        it "retrieves first position" $ do
+    describe "nestedSetsStartPosition" $ do
+        it "returns Nothing on empty input" $ do
             nestedSetsStartPosition [] `shouldBe` Nothing
+
+        it "returns first position on nonempty input" $ do
             nestedSetsStartPosition [NestedSetsNode (1, 2) 'a' []] `shouldBe` (Just (1, 2))
             nestedSetsStartPosition complexNestedSets `shouldBe` (Just (1, 8))
+
+    describe "nestedSetsNextSiblingPosition" $ do
+        it "returns Nothing on empty input" $ do
+            nestedSetsNextSiblingPosition [] (0, 0) `shouldBe` Nothing
+
+        it "returns Nothing if there is just one node" $ do
+            nestedSetsNextSiblingPosition [NestedSetsNode (1, 2) 'a' []] (0, 0) `shouldBe` Nothing
+            nestedSetsNextSiblingPosition [NestedSetsNode (1, 2) 'a' []] (1, 2) `shouldBe` Nothing
+
+        it "returns position to the second node if the first node is the starting point" $ do
+            nestedSetsNextSiblingPosition [NestedSetsNode (1, 2) 'a' [], NestedSetsNode (3, 4) 'b' []] (1, 2) `shouldBe` (Just (3, 4))
+
+        it "returns Nothing if position is not found" $ do
+            nestedSetsNextSiblingPosition [NestedSetsNode (1, 2) 'a' [], NestedSetsNode (3, 4) 'b' []] (1, 1) `shouldBe` Nothing
+
+        it "returns position to the third node if the second node is the starting point" $ do
+            nestedSetsNextSiblingPosition [NestedSetsNode (1, 2) 'a' [], NestedSetsNode (3, 4) 'b' [], NestedSetsNode (5, 6) 'c' []] (3, 4) `shouldBe` (Just (5, 6))
 
 complexForest :: Forest Char
 complexForest = [Node 'a' [
