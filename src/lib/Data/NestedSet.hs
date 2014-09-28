@@ -60,8 +60,11 @@ nestedSetsParentPosition (firstSet:ds) pos = if isPositionParent (position first
 
 nestedSetsFirstChildPosition :: NestedSets a -> Position -> Maybe Position
 nestedSetsFirstChildPosition [] _ = Nothing
-nestedSetsFirstChildPosition (first:ds) pos = if position first == pos then Just . position . head . children $ first
+nestedSetsFirstChildPosition (first:ds) pos = if position first == pos then firstPosition . children $ first
+                                              else if isPositionParent (position first) pos then nestedSetsFirstChildPosition (children first) pos
                                               else nestedSetsFirstChildPosition ds pos
+    where firstPosition [] = Nothing
+          firstPosition (x:_) = Just . position $ x
 
 isPositionParent :: Position -> Position -> Bool
 isPositionParent (parentL, parentR) (childL, childR) = parentL < childL && parentR > childR

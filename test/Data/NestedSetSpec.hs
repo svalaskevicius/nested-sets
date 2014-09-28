@@ -94,6 +94,11 @@ spec = describe "Nested set" $ do
             nestedSetsFirstChildPosition complexNestedSets (1, 8) `shouldBe` (Just (2, 7))
             nestedSetsFirstChildPosition complexNestedSets (9, 14) `shouldBe` (Just (10, 11))
 
+        it "returns child position of a deeper level" $ do
+            nestedSetsFirstChildPosition complexNestedSets (2, 7) `shouldBe` (Just (3, 4))
+
+        it "returns Nothing if a node does not have children" $ do
+            nestedSetsFirstChildPosition complexNestedSets (10, 11) `shouldBe` Nothing
 
 
 complexForest :: Forest Char
