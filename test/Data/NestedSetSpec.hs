@@ -100,6 +100,22 @@ spec = describe "Nested set" $ do
         it "returns Nothing if a node does not have children" $ do
             nestedSetsFirstChildPosition complexNestedSets (10, 11) `shouldBe` Nothing
 
+    describe "nestedSetsPositionValue" $ do
+        it "returns Nothing on empty set" $ do
+            nestedSetsPositionValue [] (0, 0) `shouldBe` (Nothing::Maybe Char)
+
+        it "returns value of first level position" $ do
+            nestedSetsPositionValue complexNestedSets (1, 8) `shouldBe` (Just 'a')
+            nestedSetsPositionValue complexNestedSets (9, 14) `shouldBe` (Just 'e')
+
+        it "returns value of deeper position" $ do
+            nestedSetsPositionValue complexNestedSets (3, 4) `shouldBe` (Just 'c')
+            nestedSetsPositionValue complexNestedSets (12, 13) `shouldBe` (Just 'g')
+
+        it "returns Nothing if it cannot find the position" $ do
+            nestedSetsPositionValue complexNestedSets (4, 5) `shouldBe` Nothing
+
+
 
 complexForest :: Forest Char
 complexForest = [Node 'a' [
