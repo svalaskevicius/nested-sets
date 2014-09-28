@@ -86,6 +86,13 @@ spec = describe "Nested set" $ do
             nestedSetsParentPosition [NestedSetsNode (1, 2) 'a' []] (4, 9) `shouldBe` Nothing
             nestedSetsParentPosition complexNestedSets (4, 6) `shouldBe` Nothing
 
+    describe "nestedSetsFirstChildPosition" $ do
+        it "returns Nothing on empty set" $ do
+            nestedSetsFirstChildPosition [] (0, 0) `shouldBe` Nothing
+
+        it "returns child position of the first level" $ do
+            nestedSetsFirstChildPosition complexNestedSets (1, 8) `shouldBe` (Just (2, 7))
+            nestedSetsFirstChildPosition complexNestedSets (9, 14) `shouldBe` (Just (10, 11))
 
 
 

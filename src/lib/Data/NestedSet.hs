@@ -7,6 +7,7 @@ module Data.NestedSet (
     nestedSetsStartPosition,
     nestedSetsNextSiblingPosition,
     nestedSetsParentPosition,
+    nestedSetsFirstChildPosition,
     ) where
 
 import Data.Tree (Forest, subForest, rootLabel, Tree(..))
@@ -55,6 +56,12 @@ nestedSetsParentPosition (firstSet:ds) pos = if isPositionParent (position first
                                                else if isPositionParent (position x) pos then descendToChildren x
                                                else findParentPos xs currentParent
           descendToChildren set = findParentPos (children set) set
+
+
+nestedSetsFirstChildPosition :: NestedSets a -> Position -> Maybe Position
+nestedSetsFirstChildPosition [] _ = Nothing
+nestedSetsFirstChildPosition (first:ds) pos = if position first == pos then Just . position . head . children $ first
+                                              else nestedSetsFirstChildPosition ds pos
 
 isPositionParent :: Position -> Position -> Bool
 isPositionParent (parentL, parentR) (childL, childR) = parentL < childL && parentR > childR
