@@ -13,26 +13,33 @@ spec = describe "Nested set" $ do
         forestToNestedSets [] `shouldBe` []
 
     it "generates nested sets for one node" $ do
-        forestToNestedSets [Node 'a' []] `shouldBe` [Capacity 1 2 []]
+        forestToNestedSets [Node 'a' []] `shouldBe` [NestedSets 1 2 []]
 
     it "generates nested sets for two nodes" $ do
-        forestToNestedSets [Node 'a' [], Node 'b' []] `shouldBe` [Capacity 1 2 [], Capacity 3 4 []]
+        forestToNestedSets [Node 'a' [], Node 'b' []] `shouldBe` [NestedSets 1 2 [], NestedSets 3 4 []]
 
     it "generates nested sets for nested nodes" $ do
-        forestToNestedSets [Node 'a' [Node 'b' []]] `shouldBe` [Capacity 1 4 [Capacity 2 3 []]]
+        forestToNestedSets [Node 'a' [Node 'b' []]] `shouldBe` [NestedSets 1 4 [NestedSets 2 3 []]]
 
     it "generates nested sets for several nested nodes" $ do
-        forestToNestedSets [Node 'a' [
-                                Node 'b' [
-                                    Node 'c' [],
-                                    Node 'd' []]],
-                            Node 'b' [
-                                Node 'c' [],
-                                Node 'd' []]]
-            `shouldBe` [Capacity 1 8 [
-                            Capacity 2 7 [
-                                Capacity 3 4 [],
-                                Capacity 5 6 []]],
-                        Capacity 9 14 [
-                            Capacity 10 11 [],
-                            Capacity 12 13 []]]
+        forestToNestedSets complexForest `shouldBe` complexNestedSets
+
+
+complexForest :: Forest Char
+complexForest = [Node 'a' [
+                     Node 'b' [
+                         Node 'c' [],
+                         Node 'd' []]],
+                 Node 'b' [
+                     Node 'c' [],
+                     Node 'd' []]]
+
+complexNestedSets :: [NestedSets]
+complexNestedSets = [NestedSets 1 8 [
+                         NestedSets 2 7 [
+                             NestedSets 3 4 [],
+                             NestedSets 5 6 []]],
+                     NestedSets 9 14 [
+                         NestedSets 10 11 [],
+                         NestedSets 12 13 []]]
+
