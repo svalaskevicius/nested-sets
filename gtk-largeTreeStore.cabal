@@ -20,7 +20,7 @@ author: Sarunas Valaskevicius
 --     location: https://github.com/svalaskevicius/hob
 
 library
-    Exposed-modules:    GtkExtras.LargeTreeStore 
+    Exposed-modules:    GtkExtras.LargeTreeStore, GtkExtras.NestedSet
     default-language:   Haskell2010
     ghc-options:
         -Wall

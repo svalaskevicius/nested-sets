@@ -27,7 +27,7 @@
 -- Standard model to store hierarchical data.
 --
 module GtkExtras.LargeTreeStore (
-
+{-
 -- * Types
   TreeStore,
 
@@ -55,8 +55,9 @@ module GtkExtras.LargeTreeStore (
 
   treeStoreChange,
   treeStoreChangeM,
+  -}
   ) where
-
+{-
 import Data.Bits
 import Data.Word (Word)
 import Data.Maybe ( fromMaybe, isJust )
@@ -272,7 +273,7 @@ showIterBits (TreeIter _ a b c) = [showBits a, showBits b, showBits c]
 showBits :: Bits a => a -> String
 showBits a = [ if testBit a i then '1' else '0' | i <- [0..bitSize a - 1] ]
 
--- | Calculate the maximum number of nodes on a per-level basis.
+-- | Calculate the number of nodes on a per-level basis.
 --
 calcForestCapacity :: Forest a -> Capacity
 calcForestCapacity f = map bitsNeeded $
@@ -700,3 +701,4 @@ treeStoreLookup (TreeStore model) path = do
         _ -> return Nothing
     _ -> return Nothing
 
+-}
