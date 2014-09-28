@@ -12,6 +12,7 @@ description: This package is a general purpose implementation of nested sets in 
              Supported functionality includes:
              .
                  * conversion from and to Forest structure from Data.Tree;
+             .
                  * position support with moving to parent, sibling and child nodes.
 homepage:
 stability: alpha
