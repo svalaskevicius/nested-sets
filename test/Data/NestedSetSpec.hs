@@ -9,20 +9,20 @@ main = hspec spec
 
 spec :: Spec
 spec = describe "Nested set" $ do
-    it "generates capacity tree for empty forest" $ do
-        calcForestCapacity [] `shouldBe` []
+    it "generates nested sets for empty forest" $ do
+        forestToNestedSets [] `shouldBe` []
 
-    it "generates capacity tree for one node" $ do
-        calcForestCapacity [Node 'a' []] `shouldBe` [Capacity 1 2 []]
+    it "generates nested sets for one node" $ do
+        forestToNestedSets [Node 'a' []] `shouldBe` [Capacity 1 2 []]
 
-    it "generates capacity tree for two nodes" $ do
-        calcForestCapacity [Node 'a' [], Node 'b' []] `shouldBe` [Capacity 1 2 [], Capacity 3 4 []]
+    it "generates nested sets for two nodes" $ do
+        forestToNestedSets [Node 'a' [], Node 'b' []] `shouldBe` [Capacity 1 2 [], Capacity 3 4 []]
 
-    it "generates capacity tree for nested nodes" $ do
-        calcForestCapacity [Node 'a' [Node 'b' []]] `shouldBe` [Capacity 1 4 [Capacity 2 3 []]]
+    it "generates nested sets for nested nodes" $ do
+        forestToNestedSets [Node 'a' [Node 'b' []]] `shouldBe` [Capacity 1 4 [Capacity 2 3 []]]
 
-    it "generates capacity tree for several nested nodes" $ do
-        calcForestCapacity [Node 'a' [
+    it "generates nested sets for several nested nodes" $ do
+        forestToNestedSets [Node 'a' [
                                 Node 'b' [
                                     Node 'c' [],
                                     Node 'd' []]],

@@ -1,6 +1,6 @@
 module Data.NestedSet (
     Capacity(..),
-    calcForestCapacity,
+    forestToNestedSets,
     ) where
 
 import Data.Tree (Forest, subForest)
@@ -11,12 +11,12 @@ data Capacity = Capacity {
     children :: [Capacity]
 } deriving (Show, Eq)
 
-calcForestCapacity :: Forest a -> [Capacity]
-calcForestCapacity = fst . calcCapacityFrom ([], 0)
+forestToNestedSets :: Forest a -> [Capacity]
+forestToNestedSets = fst . nestedSetsStartingAt ([], 0)
     where
-        calcCapacityFrom (_, start) nextForest = foldl calcCapacityForElement ([], start) nextForest
-        calcCapacityForElement (siblingCapacities, start) el =
+        nestedSetsStartingAt (_, start) nextForest = foldl nestedSetsForElement ([], start) nextForest
+        nestedSetsForElement (siblingCapacities, start) el =
             let currentElementStart = start + 1
-                (subForestCapacity, end) = calcCapacityFrom ([], currentElementStart) $ subForest el
+                (subForestCapacity, end) = nestedSetsStartingAt ([], currentElementStart) $ subForest el
                 currentElementEnd = end + 1
             in (siblingCapacities ++ [Capacity currentElementStart currentElementEnd subForestCapacity], currentElementEnd)
