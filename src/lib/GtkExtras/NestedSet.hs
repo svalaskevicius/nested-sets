@@ -16,8 +16,8 @@ calcForestCapacity :: Forest a -> [Capacity]
 calcForestCapacity = fst . calcCapacityFrom ([], 0)
     where
         calcCapacityFrom (_, start) nextForest = foldl calcCapacityForElement ([], start) nextForest
-        calcCapacityForElement (d, start) el =
+        calcCapacityForElement (siblingCapacities, start) el =
             let currentElementStart = start + 1
                 (subForestCapacity, end) = calcCapacityFrom ([], currentElementStart) $ subForest el
                 currentElementEnd = end + 1
-            in (d++[Capacity currentElementStart currentElementEnd subForestCapacity], currentElementEnd)
+            in (siblingCapacities ++ [Capacity currentElementStart currentElementEnd subForestCapacity], currentElementEnd)
