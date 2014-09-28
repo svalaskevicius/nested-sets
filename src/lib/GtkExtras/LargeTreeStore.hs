@@ -92,12 +92,6 @@ instance GObjectClass (TreeStore a) where
   toGObject (TreeStore tm) = toGObject tm
   unsafeCastGObject = TreeStore . unsafeCastGObject
 
-data Capacity = Capacity {
-    left :: Int,
-    right :: Int,
-    children :: [Capacity]
-}
-
 data Store a = Store {
   capacity :: Capacity,
   content :: Cache a
