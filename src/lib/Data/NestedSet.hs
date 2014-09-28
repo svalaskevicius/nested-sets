@@ -39,6 +39,11 @@ nestedSetsStartPosition (first:_) = Just . position $ first
 
 nestedSetsNextSiblingPosition :: NestedSets a -> Position -> Maybe Position
 nestedSetsNextSiblingPosition [] _ = Nothing
-nestedSetsNextSiblingPosition (first:second:ds) pos = if (position first == pos) then Just . position $ second else nestedSetsNextSiblingPosition (second:ds) pos
-nestedSetsNextSiblingPosition (first:[]) _ = Nothing
+nestedSetsNextSiblingPosition (first:ds) pos = if (position first == pos) then firstPositionOf ds
+                                               else if isPositionParent $ position first then nestedSetsNextSiblingPosition (children first) pos
+                                               else nestedSetsNextSiblingPosition ds pos
+    where isPositionParent (l,r) = let (targetL, targetR) = pos
+                                   in l<targetL && r>targetR
+          firstPositionOf [] = Nothing
+          firstPositionOf (firstSet:_) = Just . position $ firstSet
 

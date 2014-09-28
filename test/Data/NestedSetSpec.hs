@@ -66,6 +66,12 @@ spec = describe "Nested set" $ do
         it "returns position to the third node if the second node is the starting point" $ do
             nestedSetsNextSiblingPosition [NestedSetsNode (1, 2) 'a' [], NestedSetsNode (3, 4) 'b' [], NestedSetsNode (5, 6) 'c' []] (3, 4) `shouldBe` (Just (5, 6))
 
+        it "advances a nested position" $ do
+            nestedSetsNextSiblingPosition complexNestedSets (3, 4) `shouldBe` (Just (5, 6))
+            nestedSetsNextSiblingPosition complexNestedSets (10, 11) `shouldBe` (Just (12, 13))
+            nestedSetsNextSiblingPosition complexNestedSets (12, 13) `shouldBe` Nothing
+            nestedSetsNextSiblingPosition complexNestedSets (2, 7) `shouldBe` Nothing
+
 complexForest :: Forest Char
 complexForest = [Node 'a' [
                      Node 'b' [
