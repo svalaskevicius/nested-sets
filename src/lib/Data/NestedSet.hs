@@ -22,6 +22,8 @@ data NestedSetsNode a = NestedSetsNode {
     children :: NestedSets a
 } deriving (Show, Eq)
 
+-- | Convert forest to nested sets
+--   This function is the opposite of 'nestedSetsToForest'
 forestToNestedSets :: Forest a -> NestedSets a
 forestToNestedSets = fst . nestedSetsStartingAt ([], 0)
     where
@@ -33,13 +35,17 @@ forestToNestedSets = fst . nestedSetsStartingAt ([], 0)
                 elementContent = rootLabel el
             in (siblingCapacities ++ [NestedSetsNode (currentElementStart, currentElementEnd) elementContent subForestNestedSets], currentElementEnd)
 
+-- | Convert nested sets to forest.
+--   This function is the opposite of 'forestToNestedSets'
 nestedSetsToForest :: NestedSets a -> Forest a
 nestedSetsToForest = map (\el -> Node (content el) (nestedSetsToForest $ children el))
 
+-- | Retrieve the starting position (iterator) of the nested set.
 nestedSetsStartPosition :: NestedSets a -> Maybe Position
 nestedSetsStartPosition [] = Nothing
 nestedSetsStartPosition (first:_) = Just . position $ first
 
+-- | Advance the given position to the next sibling.
 nestedSetsNextSiblingPosition :: NestedSets a -> Position -> Maybe Position
 nestedSetsNextSiblingPosition [] _ = Nothing
 nestedSetsNextSiblingPosition (first : ds) pos
@@ -49,7 +55,7 @@ nestedSetsNextSiblingPosition (first : ds) pos
     where firstPositionOf [] = Nothing
           firstPositionOf (firstSet : _) = Just . position $ firstSet
 
-
+-- | Retrieve the position's parent position.
 nestedSetsParentPosition :: NestedSets a -> Position -> Maybe Position
 nestedSetsParentPosition [] _ = Nothing
 nestedSetsParentPosition (firstSet:ds) pos
@@ -62,7 +68,7 @@ nestedSetsParentPosition (firstSet:ds) pos
             | otherwise = findParentPos xs currentParent
           descendToChildren set = findParentPos (children set) set
 
-
+-- | Advance the position to the first child node.
 nestedSetsFirstChildPosition :: NestedSets a -> Position -> Maybe Position
 nestedSetsFirstChildPosition [] _ = Nothing
 nestedSetsFirstChildPosition (first : ds) pos
@@ -72,6 +78,7 @@ nestedSetsFirstChildPosition (first : ds) pos
     where firstPosition [] = Nothing
           firstPosition (x : _) = Just . position $ x
 
+-- | Retrieve the value for the given 'Position'.
 nestedSetsPositionValue :: NestedSets a -> Position -> Maybe a
 nestedSetsPositionValue [] _ = Nothing
 nestedSetsPositionValue (first : ds) pos
