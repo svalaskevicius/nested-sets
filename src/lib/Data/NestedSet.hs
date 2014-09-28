@@ -6,6 +6,7 @@ module Data.NestedSet (
     nestedSetsToForest,
     nestedSetsStartPosition,
     nestedSetsNextSiblingPosition,
+    nestedSetsParentPosition,
     ) where
 
 import Data.Tree (Forest, subForest, rootLabel, Tree(..))
@@ -40,10 +41,21 @@ nestedSetsStartPosition (first:_) = Just . position $ first
 nestedSetsNextSiblingPosition :: NestedSets a -> Position -> Maybe Position
 nestedSetsNextSiblingPosition [] _ = Nothing
 nestedSetsNextSiblingPosition (first:ds) pos = if (position first == pos) then firstPositionOf ds
-                                               else if isPositionParent $ position first then nestedSetsNextSiblingPosition (children first) pos
+                                               else if isPositionParent (position first) pos then nestedSetsNextSiblingPosition (children first) pos
                                                else nestedSetsNextSiblingPosition ds pos
-    where isPositionParent (l,r) = let (targetL, targetR) = pos
-                                   in l<targetL && r>targetR
-          firstPositionOf [] = Nothing
+    where firstPositionOf [] = Nothing
           firstPositionOf (firstSet:_) = Just . position $ firstSet
+
+nestedSetsParentPosition :: NestedSets a -> Position -> Maybe Position
+nestedSetsParentPosition [] _ = Nothing
+nestedSetsParentPosition (firstSet:ds) pos = if isPositionParent (position firstSet) pos then descendToChildren firstSet
+                                             else nestedSetsParentPosition ds pos
+    where findParentPos [] _ = Nothing
+          findParentPos (x:xs) currentParent = if (position x == pos) then Just . position $ currentParent
+                                               else if isPositionParent (position x) pos then descendToChildren x
+                                               else findParentPos xs currentParent
+          descendToChildren set = findParentPos (children set) set
+
+isPositionParent :: Position -> Position -> Bool
+isPositionParent (parentL, parentR) (childL, childR) = parentL < childL && parentR > childR
 

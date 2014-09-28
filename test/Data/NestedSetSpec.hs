@@ -72,6 +72,23 @@ spec = describe "Nested set" $ do
             nestedSetsNextSiblingPosition complexNestedSets (12, 13) `shouldBe` Nothing
             nestedSetsNextSiblingPosition complexNestedSets (2, 7) `shouldBe` Nothing
 
+    describe "nestedSetsParentPosition" $ do
+        it "returns Nothing on empty set" $ do
+            nestedSetsParentPosition [] (0, 0) `shouldBe` Nothing
+
+        it "returns parent position of the first level" $ do
+            nestedSetsParentPosition complexNestedSets (2, 7) `shouldBe` (Just (1, 8))
+
+        it "returns Nothing if parent of the first level position is requested" $ do
+            nestedSetsParentPosition [NestedSetsNode (1, 2) 'a' []] (1, 2) `shouldBe` Nothing
+
+        it "returns Nothing if parent of the unknown position is requested" $ do
+            nestedSetsParentPosition [NestedSetsNode (1, 2) 'a' []] (4, 9) `shouldBe` Nothing
+            nestedSetsParentPosition complexNestedSets (4, 6) `shouldBe` Nothing
+
+
+
+
 complexForest :: Forest Char
 complexForest = [Node 'a' [
                      Node 'b' [
