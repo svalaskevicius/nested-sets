@@ -4,7 +4,7 @@ module GtkExtras.NestedSet (
     calcForestCapacity,
     ) where
 
-import Data.Tree (Forest)
+import Data.Tree (Forest, subForest)
 
 data Capacity = Capacity {
     left :: Int,
@@ -12,5 +12,12 @@ data Capacity = Capacity {
     children :: [Capacity]
 } deriving (Show, Eq)
 
-calcForestCapacity :: Forest a -> Capacity
-calcForestCapacity _ = Capacity 1 2 []
+calcForestCapacity :: Forest a -> [Capacity]
+calcForestCapacity = fst . calcCapacityFrom ([], 0)
+    where
+        calcCapacityFrom (_, start) nextForest = foldl calcCapacityForElement ([], start) nextForest
+        calcCapacityForElement (d, start) el =
+            let currentElementStart = start + 1
+                (subForestCapacity, end) = calcCapacityFrom ([], currentElementStart) $ subForest el
+                currentElementEnd = end + 1
+            in (d++[Capacity currentElementStart currentElementEnd subForestCapacity], currentElementEnd)
