@@ -1,5 +1,4 @@
-
-module GtkExtras.NestedSet (
+module Data.NestedSet (
     Capacity(..),
     calcForestCapacity,
     ) where

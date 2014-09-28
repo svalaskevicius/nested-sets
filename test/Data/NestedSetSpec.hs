@@ -1,7 +1,7 @@
-module GtkExtras.NestedSetSpec (main, spec) where
+module Data.NestedSetSpec (main, spec) where
 
 import Test.Hspec
-import GtkExtras.NestedSet
+import Data.NestedSet
 import Data.Tree
 
 main :: IO ()
