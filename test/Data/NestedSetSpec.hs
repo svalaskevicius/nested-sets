@@ -115,6 +115,15 @@ spec = describe "Nested set" $ do
         it "returns Nothing if it cannot find the position" $
             nestedSetsPositionValue complexNestedSets (4, 5) `shouldBe` Nothing
 
+    describe  "nestedSetsPositionSetValue" $ do
+        it "returns unmodified nested set if position is not found" $ do
+            let ns = nestedSetsPositionSetValue complexNestedSets (100, 80) 'X'
+            ns `shouldBe` complexNestedSets
+
+        it "returns modified nested set" $ do
+            let ns = nestedSetsPositionSetValue complexNestedSets (1, 8) 'X'
+            nestedSetsPositionValue ns (1, 8) `shouldBe` Just 'X'
+
 
 
 complexForest :: Forest Char

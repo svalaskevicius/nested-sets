@@ -9,6 +9,7 @@ module Data.NestedSet (
     nestedSetsParentPosition,
     nestedSetsFirstChildPosition,
     nestedSetsPositionValue,
+    nestedSetsPositionSetValue,
     ) where
 
 import Data.Tree (Forest, Tree (..), rootLabel, subForest)
@@ -70,23 +71,32 @@ nestedSetsParentPosition (firstSet:ds) pos
 
 -- | Advance the position to the first child node.
 nestedSetsFirstChildPosition :: NestedSets a -> Position -> Maybe Position
-nestedSetsFirstChildPosition [] _ = Nothing
-nestedSetsFirstChildPosition (first : ds) pos
-    | position first == pos = firstPosition . children $ first
-    | isPositionParent (position first) pos = nestedSetsFirstChildPosition (children first) pos
-    | otherwise = nestedSetsFirstChildPosition ds pos
-    where firstPosition [] = Nothing
-          firstPosition (x : _) = Just . position $ x
+nestedSetsFirstChildPosition sets pos = firstPosition . (fmap children) $ findPosition sets pos
+    where firstPosition Nothing = Nothing
+          firstPosition (Just []) = Nothing
+          firstPosition (Just (x : _)) = Just . position $ x
 
 -- | Retrieve the value for the given 'Position'.
 nestedSetsPositionValue :: NestedSets a -> Position -> Maybe a
-nestedSetsPositionValue [] _ = Nothing
-nestedSetsPositionValue (first : ds) pos
-    | position first == pos = Just . content $ first
-    | isPositionParent (position first) pos = nestedSetsPositionValue (children first) pos
-    | otherwise = nestedSetsPositionValue ds pos
+nestedSetsPositionValue sets pos = fmap content $ findPosition sets pos
 
+-- | Set value for the 'Position' on the given nested set.
+--   Does not modify the given 'NestedSets' if the 'Position' cannot be found.
+nestedSetsPositionSetValue :: NestedSets a -> Position -> a -> NestedSets a
+nestedSetsPositionSetValue [] _ _ = []
+nestedSetsPositionSetValue (first : ds) pos value
+    | position first == pos = (first {content = value}) : ds
+    | isPositionParent (position first) pos = (first {children = nestedSetsPositionSetValue (children first) pos value }) : ds
+    | otherwise = first:(nestedSetsPositionSetValue ds pos value)
 
 isPositionParent :: Position -> Position -> Bool
 isPositionParent (parentL, parentR) (childL, childR) = parentL < childL && parentR > childR
+
+
+findPosition :: NestedSets a -> Position -> Maybe (NestedSetsNode a)
+findPosition [] _ = Nothing
+findPosition (first : ds) pos
+    | position first == pos = Just first
+    | isPositionParent (position first) pos = findPosition (children first) pos
+    | otherwise = findPosition ds pos
 
